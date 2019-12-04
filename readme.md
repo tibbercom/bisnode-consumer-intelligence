@@ -56,4 +56,4 @@ const result = client.searchOne({country: "NO", "firstName": "Ola", "lastName": 
 
 ````
 
-Currently there are three methods available. `searchOne`which is demonstrated above `search` which returns a list of search results and `searchRaw` which returns the unformatted response from bisnode.
+Currently there are three methods available. `searchOne`which is demonstrated above, `search` which returns a list of search results and `searchRaw` which returns the unformatted response from bisnode.
