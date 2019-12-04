@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/package
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run:
+          name: Deploy Package
+          command: |     
+            npm install npm-cli-login
+            yarn  
+            yarn build
+            npm run login
+            npm run 2npm      
