@@ -2,7 +2,8 @@ import moment from 'moment-timezone';
 import axios from 'axios';
 
 const TOKEN_URL = "https://login.bisnode.com/as/token.oauth2";
-const SEARCH_URL = "https://api.bisnode.com/consumerintelligence/person/v2/"
+const SEARCH_URL = "https://api.bisnode.com/consumerintelligence/person/v2/person/search"
+const MATCH_URL = "https://api.bisnode.com/consumerintelligence/person/v2/person/match"
 const SCOPE = "grant_type=client_credentials&scope=bci"
 
 const tokenGetter = ({ clientId, clientSecret }) => {
@@ -37,6 +38,7 @@ const tokenGetter = ({ clientId, clientSecret }) => {
 }
 
 const personResultMapper = (bisnodePerson) => {
+
     const { gedi,
         firstNames,
         familyName,
@@ -60,7 +62,7 @@ const personResultMapper = (bisnodePerson) => {
         dateOfBirth,
         yearOfBirth,
         deceased: !!deceased,
-        language: languageMap[communicationLanguageScript] || (address && countryLanguageMap[address.country]) || 'en-US',        
+        language: languageMap[communicationLanguageScript] || (address && countryLanguageMap[address.country]) || 'en-US',
         directMarketingRestriction: !!directMarketingRestriction,
         phoneNumber,
         address
@@ -94,7 +96,7 @@ const searchParamsMapper = (searchObj) => {
         ssn,
         sourceCountry } = searchObj;
 
-    const searchPayload = {
+    let searchPayload = {
         firstName,
         familyName: lastName || familyName,
         dateOfBirth,
@@ -106,6 +108,10 @@ const searchParamsMapper = (searchObj) => {
         sourceCountry: country || sourceCountry,
         legalId: ssn || legalId
     }
+
+    Object.keys(searchPayload)
+        .filter(key => searchPayload[key] === undefined)
+        .forEach(key => delete searchPayload[key]);
 
     if (!searchPayload.sourceCountry) {
         throw new Exception('"country" or "sourceCountry" is missing');
@@ -125,7 +131,31 @@ const searchFunc = ({ getToken }) => {
             },
             params: searchParamsMapper(params),
             url: SEARCH_URL
-        }).then(r => r.data)
+        }).then(r => {
+            return r.data
+        })
+            .catch(err => {
+                throw err.response.data;
+            });
+    }
+}
+
+const matchFunc = ({ getToken }) => {
+
+    return async (params) => {
+        const token = await getToken();
+        const payload = { queries: [searchParamsMapper(params)] };
+
+        return await axios({
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            data: payload,
+            url: MATCH_URL
+        }).then(r => {
+            return r.data
+        })
             .catch(err => {
                 throw err.response.data;
             });
@@ -135,13 +165,28 @@ const searchFunc = ({ getToken }) => {
 export default ({ clientId, clientSecret }) => {
 
     const getToken = tokenGetter({ clientId, clientSecret });
+
     const searchRaw = searchFunc({ getToken });
     const search = (params) => searchRaw(params).then(r => r.persons.map(personResultMapper));
     const searchOne = (params) => search(params).then(r => r[0]);
 
+    const matchRaw = matchFunc({ getToken });
+
+    const match = (params) => matchRaw(params).then(r => {
+        let result = [];
+        r.matchResponses.forEach(mr=>{
+            result= result.concat(mr.matchCandidates.map(personResultMapper))
+        });
+        return result;
+    });
+    const matchOne = (params) => match(params).then(r => r[0]);
+
     return {
         search,
         searchOne,
-        searchRaw
+        searchRaw,
+        matchRaw,
+        match,
+        matchOne
     }
 }
