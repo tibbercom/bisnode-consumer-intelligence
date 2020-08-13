@@ -1,6 +1,7 @@
 version: 2
 jobs:
   build:
+    context: NPM
     working_directory: ~/package
     docker:
       - image: circleci/node:10
