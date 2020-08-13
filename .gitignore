@@ -18,6 +18,7 @@ test2.js
 test.js
 test3.js
 check-home.js
+testconfig-ignore.json
 
 .DS_Store
 .vscode

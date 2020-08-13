@@ -9,8 +9,8 @@ jobs:
       - run:
           name: Deploy Package
           command: |     
-            npm install npm-cli-login
+            sudo npm install -g npm-cli-login publish
             yarn  
             yarn build
             npm run login
-            npm run 2npm      
+            npm run 2npm

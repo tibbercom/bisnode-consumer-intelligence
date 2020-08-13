@@ -42,6 +42,7 @@ const personResultMapper = (bisnodePerson) => {
     const { gedi,
         firstNames,
         familyName,
+        preferredFirstName,
         gender,
         dateOfBirth,
         yearOfBirth,
@@ -57,6 +58,7 @@ const personResultMapper = (bisnodePerson) => {
     return {
         gedi,
         firstName: firstNames.reduce((p, c) => `${p} ${c}`, '').trim(),
+        preferredFirstName,
         lastName: familyName,
         gender,
         dateOfBirth,
@@ -115,8 +117,7 @@ const searchParamsMapper = (searchObj) => {
 
     if (!searchPayload.sourceCountry) {
         throw new Exception('"country" or "sourceCountry" is missing');
-    }
-
+    }    
     return searchPayload;
 }
 
@@ -131,8 +132,8 @@ const searchFunc = ({ getToken }) => {
             },
             params: searchParamsMapper(params),
             url: SEARCH_URL
-        }).then(r => {
-            return r.data
+        }).then(r => {            
+            return r.data || { persons: [] }
         })
             .catch(err => {
                 throw err.response.data;
@@ -154,7 +155,7 @@ const matchFunc = ({ getToken }) => {
             data: payload,
             url: MATCH_URL
         }).then(r => {
-            return r.data
+            return r.data || { matchCandidates: [] }
         })
             .catch(err => {
                 throw err.response.data;
@@ -174,8 +175,8 @@ export default ({ clientId, clientSecret }) => {
 
     const match = (params) => matchRaw(params).then(r => {
         let result = [];
-        r.matchResponses.forEach(mr=>{
-            result= result.concat(mr.matchCandidates.map(personResultMapper))
+        r.matchResponses.forEach(mr => {
+            result = result.concat(mr.matchCandidates.map(personResultMapper))
         });
         return result;
     });
