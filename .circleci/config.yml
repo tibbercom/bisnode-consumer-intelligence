@@ -6,8 +6,7 @@ workflows:
       - build:
           context: NPM          
 jobs:
-  build:
-    context: NPM
+  build:    
     working_directory: ~/package
     docker:
       - image: circleci/node:10
