@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
-    "moment-timezone": "^0.5.31"
+    "moment-timezone": "^0.5.31",
+    "yargs-parser": "^20.2.4"
   }
 }
