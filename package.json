@@ -29,7 +29,7 @@
     "babel-preset-latest-node": "^3.2.1"
   },
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "moment-timezone": "^0.5.31",
     "yargs-parser": "^20.2.4"
   }
