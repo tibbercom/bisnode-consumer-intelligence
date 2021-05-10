@@ -1,36 +1,23 @@
 {
   "name": "bisnode-consumer-intelligence",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "./lib/index.js",
   "license": "MIT",
   "scripts": {
     "build": "babel src -d lib",
     "dev": " babel-node ./src/index.js",
-    "test": "ava --verbose -s",
     "login": "npm-cli-login -u $NPM_USERNAME -p $NPM_PASSWORD -e $NPM_EMAIL",
     "2npm": "publish"
   },
   "homepage": "https://github.com/tibbercom/bisnode-consumer-intelligence",
-  "ava": {
-    "failWithoutAssertions": false,
-    "files": [
-      "test/**/*"
-    ],
-    "require": [
-      "@babel/register"
-    ]
-  },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.7.4",
-    "@babel/node": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "ava": "^2.4.0",
-    "babel-preset-latest-node": "^3.2.1"
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.14.1"
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "moment-timezone": "^0.5.31",
-    "yargs-parser": "^20.2.4"
+    "moment-timezone": "^0.5.31"
   }
 }
